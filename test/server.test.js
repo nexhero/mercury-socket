@@ -7,10 +7,10 @@ const IPCServer = require('../core/server');
 const {createMessage}  = require('../core/protocol.js')
 const socketPath = path.join('/tmp', `ipc-server-test-${Date.now()}.sock`);
 
-function sendRawMessage(socketPath,route,msg) {
+function sendRawMessage(socketPath,command,msg) {
     return new Promise((resolve, reject) => {
         const client = net.createConnection(socketPath);
-        client.write(createMessage(route,msg));
+        client.write(createMessage(command,msg));
 
         client.on('data', (data) => {
             try {
@@ -27,7 +27,7 @@ function sendRawMessage(socketPath,route,msg) {
     });
 }
 
-test('IPCServer should respond correctly to a valid route', async () => {
+test('IPCServer should respond correctly to a valid command', async () => {
     const server = new IPCServer(socketPath);
 
     server.on('ping', () => {
@@ -38,14 +38,14 @@ test('IPCServer should respond correctly to a valid route', async () => {
     await new Promise((r) => setTimeout(r, 50));
     const response = await sendRawMessage(socketPath, 'ping','hello')
 
-    console.log(response.data)
-    assert.strictEqual(response.route, 'payload');
+    console.log(response)
+    assert.strictEqual(response.command, 'payload');
     assert.strictEqual(response.payload.pong, true );
 
     await fs.unlinkSync(socketPath);
 });
 
-test('IPCServer should return error on unknown route', async () => {
+test('IPCServer should return error on unknown command', async () => {
   const server = new IPCServer(socketPath + '-err');
   server.listen();
   await new Promise((r) => setTimeout(r, 50));
@@ -55,8 +55,8 @@ test('IPCServer should return error on unknown route', async () => {
                                         {});
 
     console.log(response)
-  assert.strictEqual(response.route, 'error');
-  assert.ok(response.payload.error.includes('Route not found'));
+  assert.strictEqual(response.command, 'error');
+  assert.ok(response.payload.error.includes('Command not found'));
 
   fs.unlinkSync(socketPath + '-err');
 });

@@ -5,26 +5,26 @@ const {parseMessage,createMessage} = require('./protocol.js')
 class IPCServer {
     constructor(socketPath){
         this.socketPath = socketPath
-        this.routes = new Map()
+        this.commands = new Map()
         this.middlewares = []
     }
     use(middleware){
         this.middlewares.push(middleware)
     }
-    on(route,handler){
-        this.routes.set(route,handler)
+    on(command,handler){
+        this.commands.set(command,handler)
     }
     async _handleRequest(client,raw){
 
         const msg = parseMessage(raw)
 
-        if (!msg || typeof msg.route !== 'string') {
+        if (!msg || typeof msg.command !== 'string') {
             client.write(createMessage('error',{error:'Invalid message format'}))
             return
         }
-        const {route,data} = msg
-        const ctx = {route,data,client,reply:(route,payload)=>{
-            client.write(createMessage(route,payload));
+        const {command,data} = msg
+        const ctx = {command,data,client,reply:(command,payload)=>{
+            client.write(createMessage(command,payload));
         }}
 
         // apply middleware on request
@@ -32,10 +32,10 @@ class IPCServer {
             await m(ctx)
         }
 
-        // seek route function
-        const handler = this.routes.get(route)
+        // seek command function
+        const handler = this.commands.get(command)
         if (!handler) {
-            ctx.reply('error',{error:`Route not found ${route}`})
+            ctx.reply('error',{error:`Command not found ${command}`})
             return
         }
         try {

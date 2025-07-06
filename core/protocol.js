@@ -1,6 +1,6 @@
-function createMessage(route,data){
+function createMessage(command,data){
     return JSON.stringify({
-        route:route,
+        command:command,
         payload:data})
 }
 
