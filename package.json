@@ -4,12 +4,14 @@
   "description": "Mercury service running as unix domain socket",
   "license": "MIT",
   "author": "David Pereira",
-  "type": "commonjs",
+  "type": "module",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
+    "corestore": "^7.4.5",
+    "hyperswarm": "^4.11.7",
     "mercury-core": "^1.0.5"
   }
 }

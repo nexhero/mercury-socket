@@ -1,10 +1,17 @@
-function createMessage(command,data){
+export function response(command,response){
+    return {
+        command:command,
+        payload:response
+    }
+}
+
+export function createMessage(command,data){
     return JSON.stringify({
         command:command,
         payload:data})
 }
 
-function parseMessage(raw){
+export function parseMessage(raw){
     try {
         return JSON.parse(raw.toString())
     } catch (err) {
@@ -12,4 +19,4 @@ function parseMessage(raw){
     }
 }
 
-module.exports = {createMessage,parseMessage}
+// module.exports = {createMessage,parseMessage}

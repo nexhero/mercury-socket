@@ -1,13 +1,17 @@
-const net = require('net')
-const fs  = require('fs')
-const {parseMessage,createMessage} = require('./protocol.js')
+import * as net from 'net'
+import * as fs from 'fs'
+import  {parseMessage,createMessage} from './protocol.js'
+// const net = require('net')
+// const fs  = require('fs')
+// const {parseMessage,createMessage} = require('./protocol.js')
 
-class IPCServer {
+export default class IPCServer {
     constructor(socketPath){
         this.socketPath = socketPath
         this.commands = new Map()
         this.middlewares = []
     }
+    // TODO: middleware needs to be implemented
     use(middleware){
         this.middlewares.push(middleware)
     }
@@ -22,9 +26,9 @@ class IPCServer {
             client.write(createMessage('error',{error:'Invalid message format'}))
             return
         }
-        const {command,data} = msg
-        const ctx = {command,data,client,reply:(command,payload)=>{
-            client.write(createMessage(command,payload));
+        const {command,payload} = msg
+        const ctx = {command,payload,client,reply:(command,_payload)=>{
+            client.write(createMessage(command,_payload));
         }}
 
         // apply middleware on request
@@ -40,7 +44,7 @@ class IPCServer {
         }
         try {
             const result = await handler(ctx)
-            ctx.reply('payload',{...result})
+            ctx.reply(result.command,result.payload)
         } catch (err) {
             ctx.reply('error',{error:err.message})
         }
@@ -63,4 +67,4 @@ class IPCServer {
     }
 }
 
-module.exports = IPCServer
+// module.exports = IPCServer

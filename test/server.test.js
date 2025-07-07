@@ -1,11 +1,12 @@
-const { test } = require('node:test');
-const assert = require('node:assert');
-const net = require('net');
-const fs = require('fs');
-const path = require('path');
-const IPCServer = require('../core/server');
-const {createMessage}  = require('../core/protocol.js')
-const socketPath = path.join('/tmp', `ipc-server-test-${Date.now()}.sock`);
+import { test }  from 'node:test'
+import * as assert  from 'node:assert'
+import * as net  from 'net'
+import * as fs  from 'fs'
+import * as path  from 'path'
+import IPCServer  from '../core/server.js'
+
+import {createMessage}   from '../core/protocol.js'
+const socketPath = path.join('/tmp', `ipc-server-test-${Date.now()}.sock`)
 
 function sendRawMessage(socketPath,command,msg) {
     return new Promise((resolve, reject) => {
