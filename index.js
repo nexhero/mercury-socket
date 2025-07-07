@@ -30,8 +30,8 @@ export async function main(socketPath){
         })
 
     })
-    server.on('create-note',async(ctx)=>{
 
+    server.on('create-note',async(ctx)=>{
         const doc = mercury.createDocument('NOTE')
         doc.setLabel(ctx.payload.label)
         doc.setContent(ctx.payload.content)
@@ -43,16 +43,77 @@ export async function main(socketPath){
         } catch (err) {
             return response('error',{error:err.toString()})
         }
-
-
     })
-    server.on('remove-document',(ctx)=>{
-        console.log(`Remove document ${ctx}`)
+
+    server.on('all-documents',async(ctx)=>{
+        try {
+            const all_docs = await mercury.db.getAllDocuments()
+            return response('all-documents',{...all_docs})
+
+        } catch (err) {
+            return response('error',{error:err.toString()})
+        }
+    })
+    server.on('document-id',async(ctx)=>{
+        try {
+            const doc = await mercury.db.getDocument(ctx.payload.id)
+            return response('document',{...doc.value})
+        } catch (err) {
+            return response('error',{error:err.toString()})
+        }
+    })
+
+    server.on('remove-document',async(ctx)=>{
+        try {
+            const doc = await mercury.db.removeDocument(ctx.payload.id)
+            return response('remove-document',{result:'ok'})
+        } catch (err) {
+            return response('error',{error:err.toString()})
+        }
+    })
+
+    server.on('get-local-repository',async(ctx)=>{
+        try {
+            const channel =  mercury.encodeRepository()
+            return response('local-repository',{channel})
+        } catch (err) {
+            return response('error',{error:err.toString()})
+        }
+    })
+
+    server.on('get-all-repository',async()=>{
+        try {
+            const repos = await mercury.db.getAllRepositories()
+            return response('repositories',{...repos})
+        } catch (err) {
+            return response('error',{error:err.toString()})
+        }
+    })
+
+    server.on('append-repository',async(ctx)=>{
+        try {
+            const {channel,name} =  ctx.payload
+            const res = await mercury.joinRemoteRepository(channel,name)
+            return response('append-repository',{result:'ok'})
+
+        } catch (err) {
+            return response('error',{error:err.toString()})
+        }
+    })
+    server.on('remove-repository',async(ctx)=>{
+        try {
+
+            const res = await mercury.removeRepository(ctx.payload.id)
+            return response('remove-repository',{result:'ok'})
+
+        } catch (err) {
+            return response('error',{error:err.toString()})
+        }
     })
     server.listen()
 
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {
-  main(socket_url);
+    main(socket_url);
 }
