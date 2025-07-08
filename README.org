@@ -1,0 +1,53 @@
+#+title: Mercury Unix Domain Socket
+
+This is a Unix domain socket server for managing notes using the Mercury framework. It provides IPC commands to create, retrieve, and manage documents and repositories.
+
+** Features
+- Create, read, update, and delete notes
+- Manage repositories (local and remote)
+- Unix socket communication
+- Default storage configuration for Linux
+
+** Installation
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
+2. Ensure you're using a Linux system (this application is designed for Linux only).
+
+** Usage
+Run the server with command-line options:
+```bash
+node index.js
+```
+
+** Command-Line Options
+- `-s, --socket <path>`: Path for the Unix socket (default: /tmp/mercury.sock)
+- `-d, --dir <dir>`: Directory to save database (default: ~/.config/mercury/)
+- `-b, --database <name>`: Database name (default: mercury_db.db)
+
+** IPC Commands
+1. `create-note` - Create a new note
+   - Parameters: label, content
+2. `all-documents` - List all documents
+3. `document-id` - Get document by ID
+4. `remove-document` - Remove document by ID
+5. `get-local-repository` - Get local repository
+6. `get-all-repository` - List all repositories
+7. `append-repository` - Add remote repository
+8. `remove-repository` - Remove repository by ID
+
+** Example Usage
+1. Start server with defaults:
+   ```bash
+   node mercury-socket.js
+   ```
+2. Send a create-note command:
+   ```bash
+   echo '{"command": "create-note", "payload":{"label":"Hear me out!!!","content":"This note was made on terminal"}}' | socat -T 4 - UNIX-CONNECT:/tmp/mercury.sock,ignoreeof
+   ```
+
+** Notes
+- This application is Linux-only
+- Default socket path: /tmp/mercury.sock
+- Default storage directory: ~/.config/mercury/
