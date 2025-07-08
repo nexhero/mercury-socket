@@ -1,23 +1,28 @@
-import Mercury from 'mercury-core';
 
+import Mercury from 'mercury-core';
 import Corestore from 'corestore'
 import * as os from 'os'
 import * as fs from 'fs'
+import { Command} from 'commander'
+
 import IPCServer from './core/server.js'
 import {response} from './core/protocol.js'
-const socket_url = '/tmp/mercury.sock'
-const db_path = os.homedir() + '/.config/mercury/'
-const db_name = 'mercury_db.db'
 
 
-export async function main(socketPath){
-    if (!fs.existsSync(db_path)) {
+let default_sock_path = '/tmp/mercury.sock'
+let default_storage_dir = os.homedir() + '/.config/mercury/'
+let default_db = 'mercury_db.db'
+
+
+export async function main(socketPath,storageDir,database){
+
+    if (!fs.existsSync(storageDir)) {
         console.log(`** Creating database folder **`)
-        fs.mkdirSync(db_path)
+        fs.mkdirSync(storageDir)
     }
 
     // initialize database
-    const store =  new Corestore(db_path + '/' + db_name)
+    const store =  new Corestore(storageDir + '/' + database)
     const mercury =  new Mercury(store)
     await mercury.initialize()
     mercury.listen()
@@ -115,5 +120,32 @@ export async function main(socketPath){
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {
-    main(socket_url);
+
+    if (os.type()!=='Linux') {
+        console.error('This application is designed for Linux only. It may not work on other operating systems.')
+        process.exit(1)
+    }
+    const program = new Command()
+    program
+        .name('mercury-socket')
+        .description('Run unix domain socket, to manage notes')
+        .version('1.0.0')
+    program.option('-s, --socket <string>','path for the socket')
+    program.option('-d, --dir <string>','Directory to save database')
+    program.option('-b, --database <string>','Database name')
+
+
+    program.parse(process.argv)
+    const options = program.opts();
+    if (options.socket) {
+        default_sock_path =options.socket
+    }
+
+    if (options.dir) {
+        default_storage_dir = options.dir
+    }
+    if (options.database) {
+        default_db = options.database
+    }
+    main(default_sock_path,default_storage_dir,default_db);
 }
