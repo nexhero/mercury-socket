@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-
 import Mercury from 'mercury-core';
 import Corestore from 'corestore'
 import * as os from 'os'
@@ -9,6 +8,8 @@ import { Command} from 'commander'
 import IPCServer from './core/server.js'
 import {response} from './core/protocol.js'
 
+import path from 'path'
+import {fileURLToPath} from 'url'
 
 let default_sock_path = '/tmp/mercury.sock'
 let default_storage_dir = os.homedir() + '/.config/mercury/'
@@ -120,33 +121,32 @@ export async function main(socketPath,storageDir,database){
 
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
 
-    if (os.type()!=='Linux') {
-        console.error('This application is designed for Linux only. It may not work on other operating systems.')
-        process.exit(1)
-    }
-    const program = new Command()
-    program
-        .name('mercury-socket')
-        .description('Run unix domain socket, to manage notes')
-        .version('1.0.0')
-    program.option('-s, --socket <string>','path for the socket')
-    program.option('-d, --dir <string>','Directory to save database')
-    program.option('-b, --database <string>','Database name')
-
-
-    program.parse(process.argv)
-    const options = program.opts();
-    if (options.socket) {
-        default_sock_path =options.socket
-    }
-
-    if (options.dir) {
-        default_storage_dir = options.dir
-    }
-    if (options.database) {
-        default_db = options.database
-    }
-    main(default_sock_path,default_storage_dir,default_db);
+if (os.type()!=='Linux') {
+    console.error('This application is designed for Linux only. It may not work on other operating systems.')
+    process.exit(1)
 }
+const program = new Command()
+program
+    .name('mercury-socket')
+    .description('Run unix domain socket, to manage notes')
+    .version('1.0.0')
+program.option('-s, --socket <string>','path for the socket')
+program.option('-d, --dir <string>','Directory to save database')
+program.option('-b, --database <string>','Database name')
+
+
+program.parse(process.argv)
+const options = program.opts();
+if (options.socket) {
+    default_sock_path =options.socket
+}
+
+if (options.dir) {
+    default_storage_dir = options.dir
+}
+if (options.database) {
+    default_db = options.database
+}
+
+main(default_sock_path,default_storage_dir,default_db);
