@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 
 import Mercury from 'mercury-core';
 import Corestore from 'corestore'

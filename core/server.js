@@ -1,9 +1,6 @@
 import * as net from 'net'
 import * as fs from 'fs'
 import  {parseMessage,createMessage} from './protocol.js'
-// const net = require('net')
-// const fs  = require('fs')
-// const {parseMessage,createMessage} = require('./protocol.js')
 
 export default class IPCServer {
     constructor(socketPath){

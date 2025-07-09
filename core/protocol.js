@@ -12,6 +12,7 @@ export function createMessage(command,data){
 }
 
 export function parseMessage(raw){
+
     try {
         return JSON.parse(raw.toString())
     } catch (err) {
