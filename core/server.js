@@ -1,12 +1,15 @@
 import * as net from 'net'
 import * as fs from 'fs'
 import  {parseMessage,createMessage} from './protocol.js'
+import loggerInstance from './logger.js'
+
 
 export default class IPCServer {
-    constructor(socketPath){
+    constructor(socketPath,verbose = false){
         this.socketPath = socketPath
         this.commands = new Map()
         this.middlewares = []
+        this.logger = loggerInstance(verbose)
     }
     // TODO: middleware needs to be implemented
     use(middleware){
@@ -36,6 +39,7 @@ export default class IPCServer {
         // seek command function
         const handler = this.commands.get(command)
         if (!handler) {
+            logger.error(`Command not found ${command}`)
             ctx.reply('error',{error:`Command not found ${command}`})
             return
         }
@@ -59,7 +63,7 @@ export default class IPCServer {
             })
         })
         server.listen(this.socketPath,()=>{
-            console.log(`IPC Listening on ${this.socketPath}`)
+            this.logger.info(`IPC Listening on ${this.socketPath}`)
         })
     }
 }

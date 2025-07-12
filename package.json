@@ -15,6 +15,7 @@
     "commander": "^14.0.0",
     "corestore": "^7.4.5",
     "hyperswarm": "^4.11.7",
-    "mercury-core": "^1.0.5"
+    "mercury-core": "^1.0.5",
+    "winston": "^3.17.0"
   }
 }

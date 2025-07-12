@@ -4,7 +4,7 @@ import Corestore from 'corestore'
 import * as os from 'os'
 import * as fs from 'fs'
 import { Command} from 'commander'
-
+import loggerInstance from './core/logger.js'
 import IPCServer from './core/server.js'
 import {response} from './core/protocol.js'
 
@@ -14,24 +14,26 @@ import {fileURLToPath} from 'url'
 let default_sock_path = '/tmp/mercury.sock'
 let default_storage_dir = os.homedir() + '/.config/mercury/'
 let default_db = 'mercury_db.db'
-
+let is_verbose = false
 
 export async function main(socketPath,storageDir,database){
+    const logger = loggerInstance(is_verbose)
 
     if (!fs.existsSync(storageDir)) {
-        console.log(`** Creating database folder **`)
+        logger.info(` Createing database folder`)
         fs.mkdirSync(storageDir)
     }
 
     // initialize database
     const store =  new Corestore(storageDir + '/' + database)
+    logger.info(`Loading storage at ${storageDir}/${database}`)
+
     const mercury =  new Mercury(store)
     await mercury.initialize()
     mercury.listen()
-
-    const server = new IPCServer(socketPath)
+    logger.info(`Mercury is ready to listen connection`)
+    const server = new IPCServer(socketPath, is_verbose)
     server.on('status',(ctx)=>{
-
         return response('status',{
             state:'running'
         })
@@ -123,7 +125,7 @@ export async function main(socketPath,storageDir,database){
 
 
 if (os.type()!=='Linux') {
-    console.error('This application is designed for Linux only. It may not work on other operating systems.')
+    logger.error('This application is designed for Linux only. It may not work on other operating systems.')
     process.exit(1)
 }
 const program = new Command()
@@ -134,7 +136,7 @@ program
 program.option('-s, --socket <string>','path for the socket')
 program.option('-d, --dir <string>','Directory to save database')
 program.option('-b, --database <string>','Database name')
-
+program.option('-o, --verbose','Enable verbose output')
 
 program.parse(process.argv)
 const options = program.opts();
@@ -147,6 +149,9 @@ if (options.dir) {
 }
 if (options.database) {
     default_db = options.database
+}
+if(options.verbose){
+    is_verbose = true
 }
 
 main(default_sock_path,default_storage_dir,default_db);
