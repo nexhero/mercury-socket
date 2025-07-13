@@ -58,7 +58,7 @@ export default class IPCServer {
         }
         const server = net.createServer((client)=>{
             client.on('data',(data)=>{
-
+                this.logger.info(`client request ${data}`)
                 this._handleRequest(client,data)
             })
         })

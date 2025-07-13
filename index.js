@@ -18,20 +18,24 @@ let is_verbose = false
 
 export async function main(socketPath,storageDir,database){
     const logger = loggerInstance(is_verbose)
-
     if (!fs.existsSync(storageDir)) {
         logger.info(` Createing database folder`)
         fs.mkdirSync(storageDir)
     }
 
-    // initialize database
+
     const store =  new Corestore(storageDir + '/' + database)
     logger.info(`Loading storage at ${storageDir}/${database}`)
 
     const mercury =  new Mercury(store)
-    await mercury.initialize()
+    try {
+        await mercury.initialize()
+        logger.info(`Mercury is ready to listen connection`)
+    } catch (err) {
+        logger.error(`Unable to initialize mercury ${err.toString()}`)
+    }
+
     mercury.listen()
-    logger.info(`Mercury is ready to listen connection`)
     const server = new IPCServer(socketPath, is_verbose)
     server.on('status',(ctx)=>{
         return response('status',{
