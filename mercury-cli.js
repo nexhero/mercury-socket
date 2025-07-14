@@ -5,6 +5,15 @@ import * as net from 'net'
 import * as fs from 'fs'
 import {createMessage} from './core/protocol.js'
 
+
+////////////////////////////////
+// Missing functionalities    //
+// TODO: create tag           //
+// TODO: get-local-repository //
+// TODO: get-all-repository   //
+// TODO: append-repository    //
+// TODO: remove-repositor     //
+////////////////////////////////
 // define de default socket path; it change based in the -s parameter
 let default_socket = '/tmp/mercury.sock'
 
@@ -42,8 +51,6 @@ if (os.type()!=='Linux') {
     console.error('This application is designed for Linux only. It may not work on other operating systems.')
     process.exit(1)
 }
-
-
 
 const program = new Command()
 program
