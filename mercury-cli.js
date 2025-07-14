@@ -8,11 +8,7 @@ import {createMessage} from './core/protocol.js'
 
 ////////////////////////////////
 // Missing functionalities    //
-// TODO: create tag           //
-// TODO: get-local-repository //
-// TODO: get-all-repository   //
-// TODO: append-repository    //
-// TODO: remove-repositor     //
+// TODO: remove-repository    //
 ////////////////////////////////
 // define de default socket path; it change based in the -s parameter
 let default_socket = '/tmp/mercury.sock'
