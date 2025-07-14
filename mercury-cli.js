@@ -104,5 +104,24 @@ program
     .action((opts)=>{
         sendCommand('all-documents',{},program.opts().socket)
     })
-
+program
+    .command('local-repository')
+    .description('Get the local repository key')
+    .action((opts)=>{
+        sendCommand('get-local-repository',{},program.opts().socket)
+    })
+program
+    .command('all-repository')
+    .description('Get all appended repositories')
+    .action((opts)=>{
+        sendCommand('get-all-repository',{},program.opts().socket)
+    })
+program
+    .command('append-repository')
+    .description('Append remote repository')
+    .requiredOption('--channel <string>', 'Repository key')
+    .requiredOption('--name <string>', 'Assign a name for repository')
+    .action((opts)=>{
+        sendCommand('append-repository',{channel:opts.channel,name:opts.name},program.opts().socket)
+    })
 program.parse(process.argv)
