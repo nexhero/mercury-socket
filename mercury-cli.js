@@ -69,17 +69,27 @@ program
 program
     .command('create')
     .description('Create a new entry')
-    .requiredOption('--title <title>', 'Title of the entry')
+    .requiredOption('--label <label>', 'Title of the entry')
     .requiredOption('--content <content>', 'Content of the entry')
     .option('--tag [tag]', 'Optional tag')
     .action((opts) => {
-
         sendCommand('create-note',{
-            title:opts.title,
+            label:opts.label,
             content:opts.content,
+            tag:opts.tag?opts.tag:"",
         },program.opts().socket)
     });
-
+program
+    .command('create-tag')
+    .description('Create new tag')
+    .requiredOption('--label <label>', 'Title of the tag')
+    .option('--tag [tag]','Optional Parent tag')
+    .action((opts)=>{
+        sendCommand('create-tag',{
+            label:opts.label,
+            tag:opts.tag?opts.tag:"",
+        },program.opts().socket)
+    })
 program
     .command('remove')
     .description('Remove a document')
