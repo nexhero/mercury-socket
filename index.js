@@ -48,6 +48,9 @@ export async function main(socketPath,storageDir,database){
         const doc = mercury.createDocument('NOTE')
         doc.setLabel(ctx.payload.label)
         doc.setContent(ctx.payload.content)
+        if (ctx.payload.tag) {
+            doc.setTag(ctx.payload.tag)
+        }
         try {
             await doc.save()
             return response('create-note',{
@@ -57,7 +60,21 @@ export async function main(socketPath,storageDir,database){
             return response('error',{error:err.toString()})
         }
     })
-
+    server.on('create-tag',async(ctx)=>{
+        const doc = mercury.createDocument('TAG')
+        doc.setLabel(ctx.payload.label)
+        if (ctx.payload.tag) {
+            doc.setTag(ctx.payload.tag)
+        }
+        try {
+            await doc.save()
+            return response('create-tag',{
+                ...doc.toJson()
+            })
+        } catch (err) {
+            return response('error',{error:err.toString()})
+        }
+    })
     server.on('all-documents',async(ctx)=>{
         try {
             const all_docs = await mercury.db.getAllDocuments()
