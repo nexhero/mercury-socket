@@ -1,32 +1,39 @@
 #+title: Mercury Unix Domain Socket
 
-This is a Unix domain socket server for managing notes using the Mercury framework. It provides IPC commands to create, retrieve, and manage documents and repositories.
+* Mercury UDS.
+The Mercury Unix Domain Socket project is designed to manage notes using a Unix Domain Socket (UDS) communication protocol. It consists of three main components:
+- *[[github:/nexhero/mercury-core][mercury-core]]* is responsible for managign storage, network communication, and peer-to-peer operations for sync notes.
+- *mercury-usd* is the communication protocol that allows others processes on the same machine to have access to the notes.
+- *mercury-cli* privides a command-line interface to interact with the mercury-core server through Unix Domain Socket.
 
-** Features
-- Create, read, update, and delete notes
-- Manage repositories
+This is a Unix Domain Socket for managing notes using the Mercury framework, enable to syncronize P2P notes. It provides IPC commands to create, retrieve, and manage documents and repositories.
+
+** Features.
+- Create, read, update, and delete notes, and tags
+- Manage repositories ( sync with other devices )
 - Unix socket communication
 
-** Installation
-1. Install dependencies:
+** Installation.
+This application is designed for GNU/Linux only.
+
+- Download:
    #+begin_src bash
    git clone https://github.com/nexhero/mercury-socket.git
    cd mercury-socket
    npm install
    #+end_src
 
-2. Ensure you're using a Linux system (this application is designed for Linux only).
-
 ** Run the socket daemon
-Run the server with command-line options:
 #+begin_src
 node index.js
 #+end_src
 
 *** Command-Line Options
-- -s, --socket <string>: Path for the Unix socket (default: /tmp/mercury.sock)
+- -s, --socket <string>: Path for the Unix socket (default: /tmp/mercury.socket)
 - -d, --dir <string>: Directory to save database (default: ~/.config/mercury/)
 - -b, --database <string>: Database name (default: mercury_db.db)
+- -o, --verbose Display information in the console.
+- -h, --help, It's just a normal help.
 
 ** Use mercury terminal client
 #+begin_src bash
@@ -43,10 +50,12 @@ Options:
 #+end_verse
 
 #+begin_src bash
-node mercury-cli.js create --title 'demo' --content 'done'
+node mercury-cli.js -s '/tmp/mercury.socket' create --title 'My Game project --content 'I need ideas...'
 #+end_src
 
 ** IPC Commands
+The commands are in [[https://github.com/nexhero/mercury-socket/blob/main/index.js#L47][index.js]]
+
 1. `create-note` - Create a new note
 2. `all-documents` - List all documents
 3. `document-id` - Get document by ID
@@ -57,6 +66,8 @@ node mercury-cli.js create --title 'demo' --content 'done'
 8. `remove-repository` - Remove repository by ID
 
 ** Notes
-- This application is Linux-only
-- Default socket path: /tmp/mercury.sock
+- Default socket path: /tmp/mercury.socket
 - Default storage directory: ~/.config/mercury/
+
+** License
+MIT License
