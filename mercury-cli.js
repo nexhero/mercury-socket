@@ -5,14 +5,8 @@ import * as net from 'net'
 import * as fs from 'fs'
 import {createMessage} from './core/protocol.js'
 
-
-////////////////////////////////
-// Missing functionalities    //
-// TODO: remove-repository    //
-////////////////////////////////
 // define de default socket path; it change based in the -s parameter
 let default_socket = '/tmp/mercury.sock'
-
 
 function createConnection(socket){
     if (!fs.existsSync(socket)) {
@@ -74,7 +68,8 @@ program
             content:opts.content,
             tag:opts.tag?opts.tag:"",
         },program.opts().socket)
-    });
+    })
+
 program
     .command('create-tag')
     .description('Create new tag')
@@ -86,6 +81,7 @@ program
             tag:opts.tag?opts.tag:"",
         },program.opts().socket)
     })
+
 program
     .command('remove')
     .description('Remove a document')
@@ -119,5 +115,12 @@ program
     .requiredOption('--name <string>', 'Assign a name for repository')
     .action((opts)=>{
         sendCommand('append-repository',{channel:opts.channel,name:opts.name},program.opts().socket)
+    })
+program
+    .command('remove-repository')
+    .description("Removes a specified channel, stopping all future updates for that channel.")
+    .requiredOption('--id <string>', 'Repository ID')
+    .action((opts)=>{
+        sendCommand('remove-repository',{id:opts.id}, program.opts().socket)
     })
 program.parse(process.argv)
