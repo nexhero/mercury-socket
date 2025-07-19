@@ -11,7 +11,7 @@ import {response} from './core/protocol.js'
 import path from 'path'
 import {fileURLToPath} from 'url'
 
-let default_sock_path = '/tmp/mercury.sock'
+let default_sock_path = '/tmp/mercury.socket'
 let default_storage_dir = os.homedir() + '/.config/mercury/'
 let default_db = 'mercury_db.db'
 let is_verbose = false

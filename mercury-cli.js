@@ -6,7 +6,7 @@ import * as fs from 'fs'
 import {createMessage} from './core/protocol.js'
 
 // define de default socket path; it change based in the -s parameter
-let default_socket = '/tmp/mercury.sock'
+let default_socket = '/tmp/mercury.socket'
 
 function createConnection(socket){
     if (!fs.existsSync(socket)) {
@@ -48,7 +48,7 @@ program
     .description('Terminal client for mercury socket, basic CRUD functions to manage your notes')
     .version('1.0.0')
 
-program.requiredOption('-s, --socket <string>','(Required) Unix Domain Socket path, default "/tmp/mercury.sock"')
+program.requiredOption('-s, --socket <string>','(Required) Unix Domain Socket path, default "/tmp/mercury.socket"')
 
 program
     .command('status')
